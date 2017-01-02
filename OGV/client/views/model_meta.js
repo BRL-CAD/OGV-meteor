@@ -45,7 +45,7 @@ Template.modelMeta.events({
 	    currentUser = Meteor.user();
 	    
 	/**
-	* Adding the checkd boxes to an array named category
+	* Adding the checked boxes to an array named category
 	*/
 	var category = Array();
 	$("input:checkbox[name=category]:checked").each(function(){
