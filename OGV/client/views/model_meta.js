@@ -175,8 +175,8 @@ Template.modelMeta.events({
 
 /**
 * helper to display already present categories in the model
-* Diplayed everytime when the /description/:_id page is viewed
-* Displays nothing if categories is empty.
+* Diplayed every time when the /description/:_id page is viewed
+* Displays nothing if categories are empty.
 */
 Template.modelMeta.modelCategory = function() 
 {
