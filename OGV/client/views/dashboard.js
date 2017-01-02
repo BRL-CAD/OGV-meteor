@@ -86,7 +86,7 @@ Template.dashboard.events({
     },
 
     /**
-     * When admin form is submitted, get the values form the form
+     * When admin form is submitted, get the values from the form
      * and update the settings.
      */
     'submit #dash-admin-form' : function(e,t) 
