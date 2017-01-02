@@ -1,7 +1,7 @@
 # Author Divam Gupta
 # github.com/divamgupta
 # This script is used to deploy OGV to a freebsd server
-# It is recomended run the commands indivitually by copy pasting into the terminal
+# It is recommended to run the commands individually by copying and pasting into the terminal
 
 
 cd /usr/ports/www/node-devel/
