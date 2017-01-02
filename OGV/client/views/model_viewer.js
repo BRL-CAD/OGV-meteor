@@ -20,7 +20,7 @@
  */
 
 /** @file OGV/client/views/model_viewer.js
- * Events, helpers and other logic required to render 3d models in
+ * Events, helpers and other logic required to render 3D models in
  * model Viewer. 
  */
 
@@ -85,7 +85,7 @@ Template.modelViewer.helpers({
     ownerId: function()
     {
     var parts = location.href.split('/');
-    // Id of model whose page is being visited
+    // ID of model whose page is being visited
     var modelId = parts.pop(); 
     var model = ModelFiles.findOne(modelId);
     return model.owner;
@@ -389,7 +389,7 @@ function animate()
 
 
 /**
- * Generate embed code for the current model, this iframe can
+ * Generate embed code for the current model, this frame can
  * be added on any webpage to view the model.
  */
 function generateEmbedCode()
