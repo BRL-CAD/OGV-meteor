@@ -90,7 +90,7 @@ Meteor.methods({
 					     var convertPercentage =  (counter/(objects.length - 2)) *100; 
 					     console.log("done " + convertPercentage + " %");
 					    /**
-					     * The acceptance rate for succesful conversion is at least 70%
+					     * The acceptance rate for successful conversion is at least 70%
 					     * Any model with conversion less than that is not said to be 
 					     * converted and is not shown across the website.
 					     */
