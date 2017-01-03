@@ -19,7 +19,7 @@
  */
 
 /**
- * This file contains inital settings that are entered into database
+ * This file contains initial settings that are entered into database
  * during the first installation of the software 
  */
 if (OgvSettings.find().count() === 0) 

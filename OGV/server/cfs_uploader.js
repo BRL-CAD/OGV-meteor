@@ -27,7 +27,7 @@
 
 Meteor.methods({
     /**
-     * Converts g into obj iles 
+     * Converts g into obj files 
      */
     convertFile:function(fileId)
     {
@@ -90,7 +90,7 @@ Meteor.methods({
 					     var convertPercentage =  (counter/(objects.length - 2)) *100; 
 					     console.log("done " + convertPercentage + " %");
 					    /**
-					     * The acceptance rate for succesfull conversion is at least 70%
+					     * The acceptance rate for successful conversion is at least 70%
 					     * Any model with conversion less than that is not said to be 
 					     * converted and is not shown across the website.
 					     */

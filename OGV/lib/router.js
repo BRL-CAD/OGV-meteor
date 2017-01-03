@@ -179,8 +179,8 @@ var loggingIn = function(pause) {
 }
 
 /**
- * Remove notifactions and error messages that have been seen
- * everytime a route is changed 
+ * Remove notifications and error messages that have been seen
+ * every time a route is changed 
 */
 
 Router.onBeforeAction(validateUser,{only:['cfsUploader','filemanager','dashboard','modelMeta', 'newsfeedSidebar', 'models', 'modelFeed', 'explore', 'profilePage', 'index']});

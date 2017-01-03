@@ -92,7 +92,7 @@ Accounts.onCreateUser(function(options, user) {
 
 
 /**
-*  Need to allow the users to update only the follwers array of other users
+*  Need to allow the users to update only the followers array of other users
 */
 Meteor.users.allow({
     update: function(userId, user, fieldNames, modifier) 

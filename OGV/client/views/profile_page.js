@@ -2,7 +2,7 @@ Template.profilePage.events({
 	'click #followButton': function(e, t)
 	{
 		var parts = location.href.split('/');
-		var otherId = parts.pop(); //id of user whose page is being visited
+		var otherId = parts.pop(); //ID of user whose page is being visited
 		var currentUser = Meteor.user(); //user who is using OGV at that moment		
 		
 		//updates "following" array of currentUser
@@ -25,7 +25,7 @@ Template.profilePage.events({
 	'click #unfollowButton': function(e, t)
 	{
 		var parts = location.href.split('/');
-		//id of user whose page is being visited
+		//ID of user whose page is being visited
 		var otherId = parts.pop(); 
 		
 		var currentUser = Meteor.user(); //user who is using OGV at that moment
@@ -52,7 +52,7 @@ Template.profilePage.events({
 Template.profilePage.helpers({
     currentFollowsThis: function() {
 	var parts = location.href.split('/');
-	var otherId = parts.pop(); //id of user whose page is being visited	
+	var otherId = parts.pop(); //ID of user whose page is being visited	
 	var currentUser = Meteor.user();
 	var currentFollowsThis = Meteor.users.findOne({_id: currentUser._id, "profile.following": otherId});
 
@@ -65,7 +65,7 @@ Template.profilePage.helpers({
     },
     urlUser: function() {	
 	var parts = location.href.split('/');
-	var otherId = parts.pop(); //id of user whose page is being visited	
+	var otherId = parts.pop(); //ID of user whose page is being visited	
 	var currentUser = Meteor.user();
 
 	if( currentUser._id != otherId ){
@@ -83,7 +83,7 @@ Template.profilePage.helpers({
     userImg: function() 
     {
 	var parts = location.href.split('/');
-	var otherId = parts.pop(); //id of user whose page is being visited
+	var otherId = parts.pop(); //ID of user whose page is being visited
 	var currentProfile = Meteor.users.findOne(otherId);
 	var picId = currentProfile.profile.pic;
 	if(picId){
@@ -96,7 +96,7 @@ Template.profilePage.helpers({
     person: function()
     {
     var parts = location.href.split('/');
-	var otherId = parts.pop(); //id of user whose page is being visited
+	var otherId = parts.pop(); //ID of user whose page is being visited
 	return Meteor.users.findOne(otherId);
     },
     
@@ -107,7 +107,7 @@ Template.profilePage.helpers({
     followingCount: function()
     {
     var parts = location.href.split('/');
-	//id of user whose page is being visited
+	//ID of user whose page is being visited
 	var otherId = parts.pop(); 
 	var currentProfile = Meteor.users.findOne(otherId);
 
@@ -121,12 +121,12 @@ Template.profilePage.helpers({
     
     /**
      * Returns the number of people the user (whose profile is being viewed 
-     * currently) is bring followed by.
+     * currently) is being followed by.
      */
     followerCount: function()
     {
 	var parts = location.href.split('/');
-	var otherId = parts.pop(); //id of user whose page is being visited
+	var otherId = parts.pop(); //ID of user whose page is being visited
 	var currentProfile = Meteor.users.findOne(otherId);
 
 	var followers = currentProfile.profile.follower;
@@ -148,7 +148,7 @@ Template.profileModelFeed.helpers({
     models: function() 
     {
     var parts = location.href.split('/');
-	var urlId = parts.pop(); //id of user whose page is being visited
+	var urlId = parts.pop(); //ID of user whose page is being visited
 	
 	model = ModelFiles.find({owner: urlId}, {sort:{timeUploaded:-1}});
 	if (model.count()) {
@@ -164,7 +164,7 @@ Template.profileModelFeed.helpers({
     user: function()
     {
     var parts = location.href.split('/');
-	var urlId = parts.pop(); //id of user whose page is being visited	
+	var urlId = parts.pop(); //ID of user whose page is being visited	
     return Meteor.users.findOne(urlId);
     }
 }); 
@@ -175,7 +175,7 @@ Template.profileModelFeed.events({
 		var txt;
 		var r = confirm("Are you sure, you want to delete your model?");
 		if (r == true) {
-			//Removing both ThumbFiles and ModelFiles associated with the give model id
+			//Removing both ThumbFiles and ModelFiles associated with the give model ID
 		    var model = ModelFiles.findOne(this._id);
 		    var prevThumbnail = ThumbFiles.findOne(model.thumbnail);
 		    //In case model is not without a thumbnail

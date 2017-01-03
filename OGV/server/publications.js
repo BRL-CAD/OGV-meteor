@@ -69,7 +69,7 @@ Meteor.publish('profiles', function() {
 
 Meteor.publish("userProfile",function(id){
     Meteor._sleepForMs(1000);
-    // try to find the user by id
+    // try to find the user by ID
     var user=Meteor.users.findOne({
         _id:id
     });
@@ -78,7 +78,7 @@ Meteor.publish("userProfile",function(id){
         this.ready();
         return;
     }
-    // if the user we want to display the profile is the currently logged in user...
+    // if the user whose profile we want to display is the currently logged-in user...
     if(this.userId==user._id){
         // then we return the corresponding full document via a cursor
         return Meteor.users.find(this.userId);

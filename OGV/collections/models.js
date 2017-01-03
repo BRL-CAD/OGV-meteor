@@ -19,7 +19,7 @@
  */
 
 /** @file OGV/client/views/models.js
- *  @brief All the collections and it's related function regarding
+ *  @brief All the collections and its related function regarding
  *  models
  */
 
