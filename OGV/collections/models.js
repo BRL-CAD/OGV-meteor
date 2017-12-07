@@ -29,23 +29,20 @@
  * converts g files into obj files. 
  */
   
-gStore = new FS.Store.FileSystem("modelFiles", {
-    transformWrite: function(fileObj, readStream, writeStream)
-    {
-	var fileId = fileObj._id;
+const gStore = new FS.Store.FileSystem("modelFiles", {
+    transformWrite: function(fileObj, readStream, writeStream) {
+        var fileId = fileObj._id;
 
-	Meteor.call('convertFile', fileId, function(err) {
-	     if (err) {
-		throw (new Meteor.Error('590', err.reason));	
- 	    } 	
-	});
+        Meteor.call('convertFile', fileId, function(err) {
+            if (err) throw (new Meteor.Error('590', err.reason));		
+        });
 
-	/* g files are not actually converted into obj files but 
-	 * a g file is used to get a number of obj files, so it's
-	 * piped as it is.
-	 */
-	   
-	readStream.pipe(writeStream); 
+        /* g files are not actually converted into obj files but 
+        * a g file is used to get a number of obj files, so it's
+        * piped as it is.
+        */
+        
+        readStream.pipe(writeStream); 
     } 
 });
 
@@ -55,30 +52,26 @@ gStore = new FS.Store.FileSystem("modelFiles", {
  * file uploaded by user 
  */
 
-ModelFiles = new FS.Collection("modelFiles", {
+const ModelFiles = new FS.Collection("modelFiles", {
     stores: [ gStore ]
 });
 
 
 ModelFiles.allow({
-    insert: function(userId, file) 
-    {
-	if ((file.extension() == 'g') || (file.extension() == 'obj')) {	
-	    return true;
-	} else {
-	    return false;
-	}
+    insert: function(userId, file) {
+        return (file.extension() == 'g') || (file.extension() == 'obj');
     },
-    update: function(userId,file, fieldNames, modifier) 
-    {
-	   return (userId && file.owner === userId) || modifier.$inc.viewsCount !== userId;
+
+    update: function(userId, file, fieldNames, modifier) {
+	   return file.owner === userId || modifier.$inc.viewsCount !== userId;
     },
-    download: function() 
-    {
+
+    download: function() {
     	return true;
     },
+
     remove: function (userId, file) {
-        return userId && file.owner === userId;
+        return file.owner === userId;
     }	
 });
 
@@ -87,28 +80,23 @@ ModelFiles.allow({
  * after conversion from g file.
  */
 
-OBJFiles = new FS.Collection ("objFiles", {
-    stores: [
-	new FS.Store.FileSystem("objFiles")
-    ]
-});
+const OBJFiles = new FS.Collection ("objFiles", {stores: [new FS.Store.FileSystem("objFiles")]});
 
 OBJFiles.allow({
-    insert: function(userId, file) 
-    { 
-	return !! userId;
-    
+    insert: function(userId, file) { 
+	    return typeof(userId) === 'undefined';
     },
-    update: function(userId,file) 
-    {
-	return !! userId;
+
+    update: function(userId, file) {
+	    return typeof(userId) === 'undefined';
     },
-    download: function() 
-    {
+
+    download: function() {
     	return true;
     },
+
     remove: function (userId, file) {
-        return userId && file.owner === userId;
+        return file.owner === userId;
     }	
 });
 
@@ -117,15 +105,12 @@ OBJFiles.allow({
  * to represent their model in the feed
  */
 
-ThumbFiles = new FS.Collection ("thumbFiles", {
-    stores: [
-	new FS.Store.FileSystem("thumbFiles")
-    ],
+const ThumbFiles = new FS.Collection ("thumbFiles", {
+    stores: [new FS.Store.FileSystem("thumbFiles")],
     filter: {
-	allow: {
-	    contentTypes: ['image/png', 'image/jpeg', 'image/jpg']
-	    // extensions: ['jpg']
-	}
+        allow: {
+            contentTypes: ['image/png', 'image/jpeg', 'image/jpg']
+        }
     }	
 });
 
@@ -136,33 +121,19 @@ ThumbFiles = new FS.Collection ("thumbFiles", {
  */
 
 ThumbFiles.allow({
-    insert: function(userId, file) 
-    { 
-    var owner = ModelFiles.findOne(file.gFile).owner ;
-	if (userId == owner) {
-  	    return true; 
-	} else {
-	    return false;
-	}
+    insert: function(userId, file) { 
+        return userId === ModelFiles.findOne(file.gFile).owner;
     },
 
-    update: function(userId,file) 
-    {
-	var owner = ModelFiles.findOne(file.gFile).owner ;
-	if (userId == owner) {
-  	    return true; 
-	} else {
-	    return false;
-	}
+    update: function(userId, file) {
+        return userId === ModelFiles.findOne(file.gFile).owner;
     },
 
-    download: function() 
-    {
+    download: function() {
     	return true;
     },
 
     remove: function (userId, file) {
         return true;  
     }	
-    
 });

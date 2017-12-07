@@ -23,7 +23,7 @@
  *
  */
 
-OgvSchema = new SimpleSchema({
+const OgvSchema = new SimpleSchema({
 	gobjPath: { 
 		type: String
 	},
@@ -41,34 +41,20 @@ OgvSchema = new SimpleSchema({
 	}
 });
 
-OgvSettings = new Meteor.Collection('OgvSettings');
+const OgvSettings = new Meteor.Collection('OgvSettings');
 OgvSettings.attachSchema(OgvSchema);
+
 /**
  * No one is allowed to insert and only admin can update the settings
  */
 
 OgvSettings.allow({
-    insert: function(userId, setting)
-    {
-	throw (new Meteor.Error(550, "You are not allowed to insert new settings, you can edit the old ones though"));
-	return false;
-    },
-    update: function(userId, setting)
-    {
-	roles = Meteor.user().roles;
-	var isAdmin = false;
-
-	for (role in roles)
-	{
-	    if (roles[role] === 'admin') {
-		isAdmin = true;
-	    }
-	}
-
-	if (!isAdmin) {
-	    throw (new Meteor.Error(550, "Sorry you need to be admin before you can edit site settings"));
-	}
-
-	return isAdmin;
+    insert: function(userId, setting) {
+		throw new Meteor.Error(550, "You are not allowed to insert new settings, but you may still edit old ones.");
+	},
+	
+    update: function(userId, setting) {
+		if (Meteor.user().roles.includes('admin')) return true;
+		throw (new Meteor.Error(550, "You must be an admin to edit site settings."));
     }
 });

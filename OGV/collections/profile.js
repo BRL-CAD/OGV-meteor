@@ -23,7 +23,7 @@
  *
  */
 
-userProfileSchema = new SimpleSchema({
+const userProfileSchema = new SimpleSchema({
 	name: {
 		type: String
 	},
@@ -55,7 +55,7 @@ userProfileSchema = new SimpleSchema({
 	}
 });
 
-userSchema = new SimpleSchema({
+const userSchema = new SimpleSchema({
 	username: {
 		type:String,
 		optional: true
@@ -106,14 +106,12 @@ userSchema = new SimpleSchema({
 
 Meteor.users.attachSchema(userSchema);
 
-ProfilePictures = new FS.Collection('profilePictures',  {
-    stores: [
-	new FS.Store.FileSystem("profilePictures")
-    ],
+const ProfilePictures = new FS.Collection('profilePictures',  {
+    stores: [new FS.Store.FileSystem("profilePictures")],
     filter: {
-	allow: {
-	    contentTypes: ['image/png', 'image/jpeg', 'image/jpg']
-	}
+		allow: {
+			contentTypes: ['image/png', 'image/jpeg', 'image/jpg']
+		}
     }	
 });
 
@@ -124,16 +122,13 @@ ProfilePictures = new FS.Collection('profilePictures',  {
  */
 
 ProfilePictures.allow({
-    insert: function(userId, file) 
-    {
-	return userId == file.user;
+    insert: function(userId, file) {
+		return userId == file.user;
     },
-    update: function(userId,file) 
-    {
-	return userId == file.user;
+    update: function(userId, file) {
+		return userId == file.user;
     },
-    download: function(userId, file) 
-    {
+    download: function(userId, file) {
     	return true;
     },
     remove: function (userId, file) {

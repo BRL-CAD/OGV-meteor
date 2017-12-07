@@ -22,9 +22,9 @@
  *  @brief Collections required for the social functionality of OGV
  */
 
-commentSchema = new SimpleSchema({
+const commentSchema = new SimpleSchema({
 	author: {
-		type:String
+		type: String
 	},
 	body: {
 		type: String
@@ -40,7 +40,7 @@ commentSchema = new SimpleSchema({
 	}
 });
 
-loverSchema = new SimpleSchema({
+const loverSchema = new SimpleSchema({
 	lovers: {
 		type: Array
 	},
@@ -55,24 +55,24 @@ loverSchema = new SimpleSchema({
 	}
 });
 
-shareSchema = new SimpleSchema({
+const shareSchema = new SimpleSchema({
 	ownerId: {
-		type:String
+		type: String
 	},
 	model: {
-		type:String
+		type: String
 	},
 	sharedby: {
-		type:String
+		type: String
 	},
 	timeShared: {
-		type:String
+		type: String
 	}
 });
 
-Comments = new Meteor.Collection('comments');
-Lovers = new Meteor.Collection('lovers');
-SharedModels = new Meteor.Collection('sharedModels');
+const Comments = new Meteor.Collection('comments');
+const Lovers = new Meteor.Collection('lovers');
+const SharedModels = new Meteor.Collection('sharedModels');
 
 Comments.attachSchema(commentSchema);
 Lovers.attachSchema(loverSchema);
@@ -82,137 +82,127 @@ Meteor.methods({
     /**
      * Adds new comment to post 
      */
-    share: function(shareAttributes){
-	var user = Meteor.user();
-	
-	if(!user) { 
-		throw new Meteor.Error(401, "You need to login to make comments");
-	}
-	var owner = shareAttributes.owner;
-	var post = shareAttributes.model;
-	var sharedBy = shareAttributes.sharedBy;
-	
-	SharedModels.insert({ownerId: owner, sharedby: sharedBy, model: post, timeShared: new Date()});
+    share: function(shareAttributes) {
+		var user = Meteor.user();
+		
+		if(!user) throw new Meteor.Error(401, "You must be logged in to comment.");
 
-    
-	if(user._id != owner){
-		Notifications.insert({
-		    user: sharedBy,
-		    ownerId: owner,
-		    modelId: post,
-		    type: "share",
-		    seen: false,
-		    timeNotified: new Date()
+		SharedModels.insert({
+			ownerId: shareAttributes.owner,
+			sharedby: shareAttributes.sharedBy,
+			model: shareAttributes.model,
+			timeShared: new Date()
 		});
-	}
-	
-
+		
+		if(user._id != owner) {
+			Notifications.insert({
+				user: sharedBy,
+				ownerId: owner,
+				modelId: post,
+				type: "share",
+				seen: false,
+				timeNotified: new Date()
+			});
+		}
     },
 
     comment: function(commentAttributes) {
-	var user = Meteor.user();
-	var post = ModelFiles.findOne(commentAttributes.postId);
-	
-	/** 
-	 * Validations before adding comments.
-	 */
-	if (!user) {
-	    throw new Meteor.Error(401, "You need to login to make comments");
-	}
-	
-	if (!commentAttributes.body) {
-	    throw new Meteor.Error(422, 'Please write some content');
-	}	
-	
-	if (!post) {
-	    throw new Meteor.Error(422, 'You must comment on a post');
-	}
-	
-	modelId = commentAttributes.postId;
-        ownerId = post.owner;
-	if(user._id != ownerId){
-		Notifications.insert({
-		    user: user._id,
-		    ownerId: ownerId,
-		    modelId: modelId,
-		    type: "comment",
-		    seen: false,
-		    timeNotified: new Date()
-		});
-	}
-	comment = _.extend(_.pick(commentAttributes, 'postId', 'body'), {
-	    userId: user._id,
-	    author: user.profile.name,
-	    submitted: new Date().getTime()
-        });
+		var user = Meteor.user();
+		var post = ModelFiles.findOne(commentAttributes.postId);
+		
+		/** 
+		 * Validations before adding comments.
+		 */
+		if (!user) {
+			throw new Meteor.Error(401, 'You must be logged in to comment.');
+		}
+		
+		if (!commentAttributes.body) {
+			throw new Meteor.Error(422, 'Your comment cannot be empty.');
+		}	
+		
+		if (!post) {
+			throw new Meteor.Error(422, 'You must comment on a post.');
+		}
+		
+		modelId = commentAttributes.postId;
+			ownerId = post.owner;
+		if(user._id != ownerId){
+			Notifications.insert({
+				user: user._id,
+				ownerId: ownerId,
+				modelId: modelId,
+				type: 'comment',
+				seen: false,
+				timeNotified: new Date()
+			});
+		}
+		comment = _.extend(_.pick(commentAttributes, 'postId', 'body'), {
+			userId: user._id,
+			author: user.profile.name,
+			submitted: new Date().getTime()
+			});
 
-	return Comments.insert(comment);
+			Comments.insert(comment);
     },
     
     /**
      * Adds one to lovemeter
      */
-    love: function(loveAttributes){
-	var lovers = [];
-	var alreadyLoved = false;
-	var user = Meteor.user();
+    love: function(loveAttributes) {
+		var lovers = [];
+		var user = Meteor.user();
 
-	lovers.push(user._id);
-        
-	var post = ModelFiles.findOne(loveAttributes.postId);
-	var loversObj = Lovers.findOne({postId: loveAttributes.postId});
+		lovers.push(user._id);
+			
+		var post = ModelFiles.findOne(loveAttributes.postId);
+		var loversObj = Lovers.findOne({postId: loveAttributes.postId});
 
-	if (!user) {
-	    throw new Meteor.Error(401, "You need to login to love post");
-	}
-        
-	if (!post) {
-	    throw new Meteor.Error(422, 'You must love a post');
-	}
-       
-        /**
-	 * If someone has loved the post aka there's at least one love
-	 * in the lovemeter then add 1 to it otherwise create new lovers
-	 * Object in the database.
-	 */
-
-	if (loversObj) {
-	    loversArray = loversObj.lovers;
- 	    
-	    for (l in loversArray) {
-		if (loversArray[l] == user._id) {
-		    alreadyLoved = true;
-		} 
-	    }
-	    /**
-	     * If user already loves the post, then throw an error
-	     */
-            if(alreadyLoved) {  
-                throw (new Meteor.Error(550,"you already love this"));
-	    } else {
-		loversArray.push(user._id);
-		return Lovers.update({postId: loveAttributes.postId},{$set: {lovers: loversArray, countLovers: loversArray.length}}); // update lovers
-            }
-
-        } else {
-	    modelId = loveAttributes.postId;
-            ownerId = post.owner;
-	    if(user._id != ownerId){
-		    Notifications.insert({
-			user: user._id,
-			ownerId: ownerId,
-			modelId: modelId,
-			type: "love",
-			seen: false,
-			timeNotified: new Date()
-		    });
-	    }
+		if (!user) throw new Meteor.Error(401, 'You must be logged in to love a post');
+		if (!post) throw new Meteor.Error(422, 'You must love a post.');
 		
-	    love = _.extend(_.pick(loveAttributes, 'postId'), {
-		lovers: lovers,
-		submitted: new Date().getTime()
-	    });
-	    return Lovers.insert(love);
-        }
+		/**
+		 * If someone has loved the post aka there's at least one love
+		 * in the lovemeter then add 1 to it otherwise create new lovers
+		 * Object in the database.
+		 */
+
+		if (loversObj) {
+			let loversArray = loversObj.lovers;
+	
+			// If user already loves the post, then throw an error
+			if (loversArray.includes(user._id)) throw (new Meteor.Error(550, "you already love this"));
+
+			loversArray.push(user._id);
+			Lovers.update({
+				postId: loveAttributes.postId
+			}, 
+			{
+				$set: {
+					lovers: loversArray,
+					countLovers: loversArray.length
+				}
+			});
+			return;
+		}
+
+		let modelId = loveAttributes.postId;
+		let ownerId = post.owner;
+		if(user._id != ownerId) {
+			Notifications.insert({
+				user: user._id,
+				ownerId: ownerId,
+				modelId: modelId,
+				type: "love",
+				seen: false,
+				timeNotified: new Date()
+			});
+		}
+		
+		let love = _.extend(_.pick(loveAttributes, 'postId'), {
+			lovers: lovers,
+			submitted: new Date().getTime()
+		});
+		return Lovers.insert(love);
     }
 });
