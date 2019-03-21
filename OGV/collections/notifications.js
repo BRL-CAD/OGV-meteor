@@ -23,13 +23,8 @@ Notifications = new Meteor.Collection("notifications");
 Notifications.attachSchema(notificationSchema);
 
 Notifications.allow({
-    update: function(userId, notification)
-    {
-	id = Meteor.userId();
-	if( id == userId){
-		return true;
-	} else{
-		throw(new Meteor.Error(550, "You need to be logged in to update existing notification"));
-	}
+    update: function(userId, notification) {
+		if (Meteor.userId() == userId) return true;
+		throw new Meteor.Error(550, "You must be logged in to update existing notifications.");
     }
 });
